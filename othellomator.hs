@@ -25,14 +25,17 @@ flip (x,y) c (dx,dy) board =
                else flip nextPos c (dx,dy) (M.insert nextPos c board)
   where nextPos = (x+dx, y+dy)
 
-place :: Pos -> Color -> Board-> Maybe Board
+place :: Pos -> Color -> Board-> Board
 place pos color board
-  | pos `M.member` board = Nothing
-  | outOfBounds pos  = Nothing
+  | pos `M.member` board = errorMsg
+  | outOfBounds pos  = errorMsg
   | otherwise =
     let directions = [(x,y) | x <- [-1..1], y <- [-1..1], x /= 0 || y /= 0]
         nextBoard = foldr (flip pos color) board directions
-    in if board == nextBoard then Nothing else Just (M.insert pos color nextBoard)
+    in if board == nextBoard
+       then errorMsg
+       else (M.insert pos color nextBoard)
+  where errorMsg = error $ "Illegal move " ++ show pos ++ " by " ++ show color ++ "."
 
 initialBoard = M.fromList [((4,4),White),((4,5),Black),((5,4),Black),((5,5),White)]
 
