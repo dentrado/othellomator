@@ -47,14 +47,18 @@ boardToStr b c = (if c == Black then 'B' else 'W'):(map translate positions)
           Just Black -> 'X'
           Just White -> 'O'
 
-
-
-playLoop :: String -> String -> Board -> Color -> Color
-
-
+playLoop :: String -> String -> Color -> Integer -> Board -> Integer -> IO Board
+playLoop playerProg oppProg color time board passCount =
+  if passCount == 2
+  then return board
+  else do let nextLoop = playLoop oppProg playerProg (opponent color) time
+          move <- readProcess playerProg [boardToStr board color, show time] ""
+          case reads move of
+            [(pos,_)] -> nextLoop (place pos color board) 0
+            _       -> nextLoop board (passCount + 1)
 
 main :: IO ()
 main = do args <- getArgs
           case args of
-            [white:black:time] ->
-            _ -> print "Usage: " ++ getProgName ++ "white_player black_player time"
+            [wprog,bprog,time] -> playLoop bprog wprog Black (read time) initialBoard 0 >>= print
+            _ -> getProgName >>= \n -> print $ "Usage: " ++ n ++ "white_player black_player time"
