@@ -61,4 +61,4 @@ main :: IO ()
 main = do args <- getArgs
           case args of
             [wprog,bprog,time] -> playLoop bprog wprog Black (read time) initialBoard 0 >>= print
-            _ -> getProgName >>= \n -> print $ "Usage: " ++ n ++ "white_player black_player time"
+            _ -> getProgName >>= \n -> print $ "Usage: " ++ n ++ " white_player black_player time"
