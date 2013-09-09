@@ -53,6 +53,7 @@ playLoop playerProg oppProg color time board passCount =
   then return board
   else do let nextLoop = playLoop oppProg playerProg (opponent color) time
           move <- readProcess playerProg [boardToStr board color, show time] ""
+          putStrLn $ show color ++ " played " ++ show move
           case reads move of
             [(pos,_)] -> nextLoop (place pos color board) 0
             _       -> nextLoop board (passCount + 1)
